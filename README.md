@@ -2,8 +2,6 @@
 
 ## Overview
 
-A two-player 6x6 checkers environment using the PettingZoo AEC API.
-
 -   Agents: `player_1`, `player_2`
 -   Turn-based gameplay
 -   Pieces:
