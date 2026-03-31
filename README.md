@@ -1,14 +1,76 @@
-# 6x6 Checkers with Actor-Critic (Self-Play)
+# Checkers 6x6 (PettingZoo AEC)
 
-## Task 1: Custom Environment
+## Overview
 
-The board is represented as a 6×6 grid with values: 0 (empty), 1/-1 (pieces), and 2/-2 (kings). The action space is a tuple (from_row, from_col, to_row, to_col), with only legal moves allowed. Captures are mandatory, and pieces are promoted to kings upon reaching the opposite side.
+A two-player 6x6 checkers environment using the PettingZoo AEC API.
 
-Rewards: +1 for win, -1 for loss, +0.25 for capture, and 0.5 each for a draw (only kings remain). The game ends when a player has no pieces, no legal moves, or a draw occurs.
+-   Agents: `player_1`, `player_2`
+-   Turn-based gameplay
+-   Pieces:
+    -   `1`, `2` -> player_1 (regular piece, king)
+    -   `-1`, `-2` -> player_2 (regular piece, king)
 
-## Task 2: Actor-Critic & Self-Play
+------------------------------------------------------------------------
 
-Actor-Critic uses two components: an actor that learns the policy and the critic that estimates the value function and is updated using the TD error.
-The critic computes the TD error δ = r + γV(s′) − V(s) and updates the value function.  
-The actor updates the policy using log π(a|s) weighted by δ.  
-The negative sign is used because optimization minimizes loss, while policy gradients maximize reward.
+## Observation Space
+
+``` python
+Box(low=-2, high=2, shape=(6, 6), dtype=np.int8)
+```
+
+-   6X6 board
+-   Values:
+    -   `0`: empty
+    -   `1/-1`: regular pieces
+    -   `2/-2`: kings
+
+Each agent observes the full board.
+
+------------------------------------------------------------------------
+
+## Action Space
+
+``` python
+Tuple((Discrete(6), Discrete(6), Discrete(6), Discrete(6)))
+```
+
+Action format:
+
+``` python
+(from_row, from_col, to_row, to_col)
+```
+
+-   Represents moving a piece from one position to another
+-   Only legal moves are allowed
+-   Legal actions are provided via:
+
+``` python
+info["legal_moves"]
+```
+
+------------------------------------------------------------------------
+
+## Rewards
+
+-   `+1` -> win
+-   `-1` -> loss
+-   `+0.25` -> capturing a piece
+-   `+0.5` each -> draw (only kings remain)
+
+------------------------------------------------------------------------
+
+## Termination Conditions
+
+The game ends when:
+
+1.  A player has no pieces left\
+2.  A player has no legal moves\
+3.  Only kings remain (draw)
+
+------------------------------------------------------------------------
+
+## Notes
+
+-   Captures are mandatory if available\
+-   Multi-capture is enforced (same piece must continue capturing)\
+-   No time-limit truncation is used
